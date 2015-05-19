@@ -1,0 +1,4 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classHECL_1_1ProjectPath.html" title="Canonicalized project path representation using POSIX conventions. " alt="" coords="5,5,144,32"/>
+<area shape="rect" id="node2" href="$classHECL_1_1ProjectRootPath.html" title="Special ProjectRootPath subclass for opening HECLDatabase::IProject instances. " alt="" coords="192,5,360,32"/>
+</map>

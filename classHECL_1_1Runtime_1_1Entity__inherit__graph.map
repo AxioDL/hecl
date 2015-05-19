@@ -1,0 +1,4 @@
+<map id="HECL::Runtime::Entity" name="HECL::Runtime::Entity">
+<area shape="rect" id="node2" href="$classHECL_1_1Runtime_1_1Group.html" title="Interface representing a load&#45;ordered group of runtime objects. " alt="" coords="5,182,167,259"/>
+<area shape="rect" id="node3" href="$classHECL_1_1Runtime_1_1ObjectBase.html" title="Base object to subclass for integrating with key runtime operations. " alt="" coords="191,160,386,281"/>
+</map>

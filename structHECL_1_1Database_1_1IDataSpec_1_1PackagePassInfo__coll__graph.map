@@ -1,0 +1,6 @@
+<map id="HECL::Database::IDataSpec::PackagePassInfo" name="HECL::Database::IDataSpec::PackagePassInfo">
+<area shape="rect" id="node2" href="$classHECL_1_1ProjectPath.html" title="Canonicalized project path representation using POSIX conventions. " alt="" coords="5,301,188,569"/>
+<area shape="rect" id="node3" title="STL class. " alt="" coords="55,147,138,224"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="31,5,162,97"/>
+<area shape="rect" id="node5" href="$classHECL_1_1Database_1_1PackageDepsgraph.html" title="Nodegraph class for gathering dependency&#45;resolved objects for packaging. " alt="" coords="213,397,469,474"/>
+</map>

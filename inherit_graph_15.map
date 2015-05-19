@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classHECL_1_1Runtime_1_1Entity.html" title="HECL::Runtime::Entity" alt="" coords="5,31,163,57"/>
+<area shape="rect" id="node2" href="$classHECL_1_1Runtime_1_1Group.html" title="Interface representing a load&#45;ordered group of runtime objects. " alt="" coords="227,5,389,32"/>
+<area shape="rect" id="node3" href="$classHECL_1_1Runtime_1_1ObjectBase.html" title="Base object to subclass for integrating with key runtime operations. " alt="" coords="211,56,405,83"/>
+</map>
