@@ -133,7 +133,7 @@ std::string GLSL::makeVert(const char* glslVer, unsigned col, unsigned uv, unsig
                   "    vec4 normAccum = vec4(0.0,0.0,0.0,0.0);\n";
         for (size_t i=0 ; i<s ; ++i)
             retval += hecl::Format("    posAccum += (mv[%" PRISize "] * vec4(posIn, 1.0)) * weightIn[%" PRISize "][%" PRISize "];\n"
-                                   "    normAccum += (mvInv[%" PRISize "] * vec4(normIn, 1.0)) * weightIn[%" PRISize "][%" PRISize "];\n",
+                                   "    normAccum += (vec4(mat3(mvInv[%" PRISize "]) * normIn, 1.0)) * weightIn[%" PRISize "][%" PRISize "];\n",
                                    i, i/4, i%4, i, i/4, i%4);
         retval += "    posAccum[3] = 1.0;\n"
                   "    vtf.mvPos = posAccum;\n"
@@ -144,7 +144,7 @@ std::string GLSL::makeVert(const char* glslVer, unsigned col, unsigned uv, unsig
     {
         /* non-skinned */
         retval += "    vtf.mvPos = mv[0] * vec4(posIn, 1.0);\n"
-                  "    vtf.mvNorm = mvInv[0] * vec4(normIn, 0.0);\n"
+                  "    vtf.mvNorm = vec4(mat3(mvInv[0]) * normIn, 0.0);\n"
                   "    gl_Position = proj * vtf.mvPos;\n";
     }
 
@@ -231,7 +231,9 @@ std::string GLSL::makeFrag(const char* glslVer,
             "SBINDING(0) in VertToFrag vtf;\n\n" +
             lightingSrc + "\n" +
             postSrc +
-            "\nvoid main()\n{\n";
+            "\nvoid main()\n{\n"
+            "    colorOut = vec4(vtf.mvNorm.xyz * vec3(0.5f) + 0.5, 1.0);\n"
+            "    return;\n";
 
     if (m_lighting)
     {
