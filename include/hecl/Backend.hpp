@@ -5,10 +5,9 @@
 #include <string_view>
 #include <vector>
 
-#include <boo/graphicsdev/IGraphicsDataFactory.hpp>
-
+#include "hsh/hsh.h"
 #include "hecl.hpp"
-#include "../extern/boo/xxhash/xxhash.h"
+#include "hecl-xxhash.h"
 
 namespace hecl::Backend {
 struct ExtensionSlot;
@@ -109,7 +108,7 @@ class ShaderTag : public Hash {
 
 public:
   ShaderTag() = default;
-  ShaderTag(std::string_view source, uint8_t c, uint8_t u, uint8_t w, uint8_t s, boo::Primitive pt,
+  ShaderTag(std::string_view source, uint8_t c, uint8_t u, uint8_t w, uint8_t s, hsh::Topology pt,
             Backend::ReflectionType reflectionType, bool depthTest, bool depthWrite, bool backfaceCulling,
             bool alphaTest)
   : Hash(source) {
@@ -125,7 +124,7 @@ public:
     m_alphaTest = alphaTest;
     hash ^= m_meta;
   }
-  ShaderTag(uint64_t hashin, uint8_t c, uint8_t u, uint8_t w, uint8_t s, boo::Primitive pt,
+  ShaderTag(uint64_t hashin, uint8_t c, uint8_t u, uint8_t w, uint8_t s, hsh::Topology pt,
             Backend::ReflectionType reflectionType, bool depthTest, bool depthWrite, bool backfaceCulling,
             bool alphaTest)
   : Hash(hashin) {
@@ -147,43 +146,13 @@ public:
   uint8_t getUvCount() const { return m_uvCount; }
   uint8_t getWeightCount() const { return m_weightCount; }
   uint8_t getSkinSlotCount() const { return m_skinSlotCount; }
-  boo::Primitive getPrimType() const { return boo::Primitive(m_primitiveType); }
+  hsh::Topology getPrimType() const { return hsh::Topology(m_primitiveType); }
   Backend::ReflectionType getReflectionType() const { return Backend::ReflectionType(m_reflectionType); }
   bool getDepthTest() const { return m_depthTest; }
   bool getDepthWrite() const { return m_depthWrite; }
   bool getBackfaceCulling() const { return m_backfaceCulling; }
   bool getAlphaTest() const { return m_alphaTest; }
   uint64_t getMetaData() const { return m_meta; }
-
-  std::vector<boo::VertexElementDescriptor> vertexFormat() const {
-    std::vector<boo::VertexElementDescriptor> ret;
-    size_t elemCount = 2 + m_colorCount + m_uvCount + m_weightCount;
-    ret.resize(elemCount);
-
-    ret[0].semantic = boo::VertexSemantic::Position3;
-    ret[1].semantic = boo::VertexSemantic::Normal3;
-    size_t e = 2;
-
-    for (size_t i = 0; i < m_colorCount; ++i, ++e) {
-      ret[e].semantic = boo::VertexSemantic::ColorUNorm;
-      ret[e].semanticIdx = i;
-    }
-
-    for (size_t i = 0; i < m_uvCount; ++i, ++e) {
-      ret[e].semantic = boo::VertexSemantic::UV2;
-      ret[e].semanticIdx = i;
-    }
-
-    for (size_t i = 0; i < m_weightCount; ++i, ++e) {
-      ret[e].semantic = boo::VertexSemantic::Weight;
-      ret[e].semanticIdx = i;
-    }
-
-    return ret;
-  }
-
-  boo::AdditionalPipelineInfo additionalInfo(const ExtensionSlot& ext,
-                                             std::pair<BlendFactor, BlendFactor> blendFactors) const;
 };
 
 struct Function {
@@ -248,46 +217,6 @@ struct ExtensionSlot {
     return m_hash;
   }
 };
-
-inline boo::AdditionalPipelineInfo ShaderTag::additionalInfo(const ExtensionSlot& ext,
-                                                             std::pair<BlendFactor, BlendFactor> blendFactors) const {
-  boo::ZTest zTest;
-  switch (ext.depthTest) {
-  case hecl::Backend::ZTest::Original:
-  default:
-    zTest = getDepthTest() ? boo::ZTest::LEqual : boo::ZTest::None;
-    break;
-  case hecl::Backend::ZTest::None:
-    zTest = boo::ZTest::None;
-    break;
-  case hecl::Backend::ZTest::LEqual:
-    zTest = boo::ZTest::LEqual;
-    break;
-  case hecl::Backend::ZTest::Greater:
-    zTest = boo::ZTest::Greater;
-    break;
-  case hecl::Backend::ZTest::Equal:
-    zTest = boo::ZTest::Equal;
-    break;
-  case hecl::Backend::ZTest::GEqual:
-    zTest = boo::ZTest::GEqual;
-    break;
-  }
-
-  BlendFactor srcFactor = m_alphaTest ? BlendFactor::One : blendFactors.first;
-  BlendFactor dstFactor = m_alphaTest ? BlendFactor::Zero : blendFactors.second;
-  return {boo::BlendFactor((ext.srcFactor == BlendFactor::Original) ? srcFactor : ext.srcFactor),
-          boo::BlendFactor((ext.dstFactor == BlendFactor::Original) ? dstFactor : ext.dstFactor),
-          getPrimType(),
-          zTest,
-          ext.noDepthWrite ? false : getDepthWrite(),
-          !ext.noColorWrite,
-          !ext.noAlphaWrite,
-          (ext.cullMode == hecl::Backend::CullMode::Original)
-              ? (getBackfaceCulling() ? boo::CullMode::Backface : boo::CullMode::None)
-              : boo::CullMode(ext.cullMode),
-          !ext.noAlphaOverwrite};
-}
 
 } // namespace hecl::Backend
 

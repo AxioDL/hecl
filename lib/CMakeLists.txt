@@ -20,13 +20,11 @@ endif()
 set(HECL_HEADERS
     ../include/hecl/CVar.hpp
     ../include/hecl/CVarManager.hpp
-    ../include/hecl/Console.hpp
     ../include/hecl/CVarCommons.hpp
     ../include/hecl/hecl.hpp
     ../include/hecl/MultiProgressPrinter.hpp
     ../include/hecl/FourCC.hpp
     ../include/hecl/TypedVariant.hpp
-    ../include/hecl/HMDLMeta.hpp
     ../include/hecl/Backend.hpp
     ../include/hecl/Blender/Connection.hpp
     ../include/hecl/Blender/SDNARead.hpp
@@ -37,12 +35,7 @@ set(HECL_HEADERS
     ../include/hecl/ClientProcess.hpp
     ../include/hecl/SystemChar.hpp
     ../include/hecl/BitVector.hpp
-    ../include/hecl/MathExtras.hpp
-    ../include/hecl/UniformBufferPool.hpp
-    ../include/hecl/VertexBufferPool.hpp
-    ../include/hecl/PipelineBase.hpp
-    ../include/hecl/Pipeline.hpp
-    ../include/hecl/Compilers.hpp)
+    ../include/hecl/MathExtras.hpp)
 set(COMMON_SOURCES
     hecl.cpp
     MultiProgressPrinter.cpp
@@ -51,12 +44,9 @@ set(COMMON_SOURCES
     HumanizeNumber.cpp
     CVar.cpp
     CVarManager.cpp
-    Console.cpp
     ClientProcess.cpp
     SteamFinder.cpp
-    WideStringConvert.cpp
-    Compilers.cpp
-    Pipeline.cpp)
+    WideStringConvert.cpp)
 
 if(UNIX)
   list(APPEND PLAT_SRCS closefrom.c)
@@ -70,8 +60,8 @@ add_library(hecl-full
             ${HECL_HEADERS}
             ${PLAT_SRCS})
 target_include_directories(hecl-full PUBLIC ../include)
-target_link_libraries(hecl-full PUBLIC ${HECL_APPLICATION_REPS_TARGETS_LIST}
-                      hecl-blender-addon boo athena-core logvisor)
+target_link_libraries(hecl-full PUBLIC
+                      hecl-blender-addon xxhash hsh athena-core logvisor)
 target_atdna(hecl-full atdna_HMDLMeta_full.cpp ../include/hecl/HMDLMeta.hpp)
 target_atdna(hecl-full atdna_CVar_full.cpp ../include/hecl/CVar.hpp)
 target_atdna(hecl-full atdna_SDNARead_full.cpp ../include/hecl/Blender/SDNARead.hpp)
@@ -82,22 +72,11 @@ add_library(hecl-light
             ${HECL_HEADERS}
             ${PLAT_SRCS})
 target_include_directories(hecl-light PUBLIC ../include)
-target_link_libraries(hecl-light PUBLIC ${HECL_APPLICATION_REPS_TARGETS_LIST} boo athena-core logvisor)
+target_link_libraries(hecl-light PUBLIC xxhash hsh athena-core logvisor)
 target_atdna(hecl-light atdna_HMDLMeta_light.cpp ../include/hecl/HMDLMeta.hpp)
 target_atdna(hecl-light atdna_CVar_light.cpp ../include/hecl/CVar.hpp)
-
-add_library(hecl-compilers Compilers.cpp WideStringConvert.cpp)
-get_target_property(BOO_INCLUDES boo INTERFACE_INCLUDE_DIRECTORIES)
-target_include_directories(hecl-compilers PUBLIC ../include ${BOO_INCLUDES})
-target_link_libraries(hecl-compilers PUBLIC athena-core logvisor xxhash
-        glslang OSDependent OGLCompiler SPIRV glslang-default-resource-limits)
 
 if(COMMAND add_sanitizers)
   add_sanitizers(hecl-full)
   add_sanitizers(hecl-light)
-  add_sanitizers(hecl-compilers)
-endif()
-
-if(WINDOWS_STORE)
-  set_property(TARGET hecl-full PROPERTY VS_WINRT_COMPONENT TRUE)
 endif()

@@ -12,8 +12,6 @@
 #include "hecl/hecl.hpp"
 #include "hecl/SystemChar.hpp"
 
-#include <boo/ThreadLocalPtr.hpp>
-
 namespace hecl::Database {
 class IDataSpec;
 }
@@ -83,7 +81,7 @@ private:
     void proc();
   };
   std::vector<Worker> m_workers;
-  static ThreadLocalPtr<ClientProcess::Worker> ThreadWorker;
+  static thread_local ClientProcess::Worker* ThreadWorker;
 
 public:
   ClientProcess(const MultiProgressPrinter* progPrinter = nullptr);
@@ -100,7 +98,7 @@ public:
   bool isBusy() const { return m_pendingQueue.size() || m_inProgress; }
 
   static int GetThreadWorkerIdx() {
-    Worker* w = ThreadWorker.get();
+    Worker* w = ThreadWorker;
     if (w)
       return w->m_idx;
     return -1;

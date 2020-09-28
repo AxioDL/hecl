@@ -4,9 +4,6 @@
 [submodule "extern/athena"]
 	path = extern/athena
 	url = ../../libAthena/athena.git
-[submodule "extern/boo"]
-	path = extern/boo
-	url = ../boo.git
 [submodule "extern/libjpeg-turbo"]
 	path = extern/libjpeg-turbo
 	url = ../libjpeg-turbo.git

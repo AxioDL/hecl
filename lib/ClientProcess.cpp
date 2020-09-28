@@ -7,7 +7,6 @@
 #include "hecl/MultiProgressPrinter.hpp"
 
 #include <athena/FileReader.hpp>
-#include <boo/IApplication.hpp>
 #include <logvisor/logvisor.hpp>
 
 #ifdef _WIN32
@@ -22,7 +21,7 @@
 namespace hecl {
 static logvisor::Module CP_Log("hecl::ClientProcess");
 
-ThreadLocalPtr<ClientProcess::Worker> ClientProcess::ThreadWorker;
+thread_local ClientProcess::Worker* ClientProcess::ThreadWorker;
 
 int CpuCountOverride = 0;
 
@@ -92,7 +91,7 @@ ClientProcess::Worker::Worker(ClientProcess& proc, int idx) : m_proc(proc), m_id
 }
 
 void ClientProcess::Worker::proc() {
-  ClientProcess::ThreadWorker.reset(this);
+  ClientProcess::ThreadWorker = this;
 
   std::string thrName = fmt::format(FMT_STRING("HECL Worker {}"), m_idx);
   logvisor::RegisterThreadName(thrName.c_str());
