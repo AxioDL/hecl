@@ -57,9 +57,9 @@ class PathHasher:
         read_str = readpipestr()
         return int(read_str[0:8], 16)
 
-# Ensure Blender 2.81 is being used
-if bpy.app.version < (2, 81, 0):
-    writepipestr(b'NOT281')
+# Ensure Blender 2.90 is being used
+if bpy.app.version < (2, 90, 0):
+    writepipestr(b'NOT290')
     _quitblender()
 
 # If there's a third argument, use it as the .zip path containing the addon
@@ -475,7 +475,8 @@ try:
             if len(cmdargs) >= 4:
                 bpy.ops.wm.open_mainfile(filepath=cmdargs[3])
             else:
-                bpy.ops.wm.read_homefile()
+                bpy.ops.wm.read_homefile(use_empty=True)
+                bpy.context.scene.world = bpy.data.worlds.new('World')
             loaded_blend = cmdargs[1]
             bpy.context.preferences.filepaths.save_version = 0
             if 'FINISHED' in bpy.ops.wm.save_as_mainfile(filepath=cmdargs[1]):
