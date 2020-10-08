@@ -5,9 +5,12 @@
 #include <string_view>
 #include <vector>
 
-#include "hsh/hsh.h"
 #include "hecl.hpp"
 #include "hecl-xxhash.h"
+
+namespace hsh {
+enum Topology : uint8_t;
+} // namespace hsh
 
 namespace hecl::Backend {
 struct ExtensionSlot;
