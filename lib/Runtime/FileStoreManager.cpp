@@ -35,6 +35,12 @@ FileStoreManager::FileStoreManager(SystemStringView domain) : m_domain(domain) {
 
   hecl::MakeDir(path.c_str());
   m_storeRoot = path;
+#elif defined(__SWITCH__)
+  std::string path = "/";
+  path += domain.data();
+  if (mkdir(path.c_str(), 0755) && errno != EEXIST)
+    Log.report(logvisor::Fatal, FMT_STRING("unable to mkdir at {}"), path);
+  m_storeRoot = path;
 #else
   const char* xdg_data_home = getenv("XDG_DATA_HOME");
   std::string path;

@@ -272,7 +272,7 @@ inline FILE* Fopen(const SystemChar* path, const SystemChar* mode, FileLockType 
     OVERLAPPED ov = {};
     LockFileEx((HANDLE)(uintptr_t)_fileno(fp), (lock == FileLockType::Write) ? LOCKFILE_EXCLUSIVE_LOCK : 0, 0, 0, 1,
                &ov);
-#else
+#elif !defined(__SWITCH__)
     if (flock(fileno(fp), ((lock == FileLockType::Write) ? LOCK_EX : LOCK_SH) | LOCK_NB))
       LogModule.report(logvisor::Error, FMT_STRING("flock {}: {}"), path, strerror(errno));
 #endif
@@ -410,7 +410,7 @@ inline int ConsoleWidth(bool* ok = nullptr) {
   if (ok)
     *ok = true;
 #endif
-#else
+#elif !defined(__SWITCH__)
   if (ok)
     *ok = false;
   struct winsize w;

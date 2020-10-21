@@ -386,7 +386,13 @@ hecl::DirectoryEnumerator::DirectoryEnumerator(SystemStringView path, Mode mode,
 
     if (mode == Mode::DirsSorted)
       break;
+#ifdef __SWITCH__
+    // rewinddir is broken
+    closedir(dir);
+    dir = opendir(path.data());
+#else
     rewinddir(dir);
+#endif
     [[fallthrough]];
   }
   case Mode::FilesSorted: {
@@ -645,9 +651,9 @@ int RecursiveMakeDir(const SystemChar* dir) {
   SystemChar tmp[1024];
 
   /* copy path */
-  std::strncpy(tmp, dir, std::size(tmp));
+  std::strncpy(tmp, dir, std::size(tmp) - 1);
   const size_t len = std::strlen(tmp);
-  if (len >= std::size(tmp)) {
+  if (len >= std::size(tmp) - 1) {
     return -1;
   }
 
@@ -813,7 +819,7 @@ int RunProcess(const SystemChar* path, const SystemChar* const args[]) {
   CloseHandle(pinfo.hThread);
 
   return ret;
-#else
+#elif !defined(__SWITCH__)
   pid_t pid = fork();
   if (!pid) {
     closefrom(3);
@@ -825,6 +831,8 @@ int RunProcess(const SystemChar* path, const SystemChar* const args[]) {
     return -1;
   if (WIFEXITED(ret))
     return WEXITSTATUS(ret);
+  return -1;
+#else
   return -1;
 #endif
 }

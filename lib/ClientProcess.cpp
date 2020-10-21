@@ -54,6 +54,8 @@ static int GetCPUCount() {
   SYSTEM_INFO sysinfo;
   GetSystemInfo(&sysinfo);
   ret = sysinfo.dwNumberOfProcessors;
+#elif defined(__SWITCH__)
+  ret = 4;
 #else
   ret = sysconf(_SC_NPROCESSORS_ONLN);
 #endif

@@ -285,7 +285,7 @@ static bool RegFileExists(const hecl::SystemChar* path) {
 #endif
 
 Connection::Connection(int verbosityLevel) {
-#if !WINDOWS_STORE
+#if !WINDOWS_STORE && !defined(__SWITCH__)
   if (hecl::VerbosityLevel >= 1)
     BlenderLog.report(logvisor::Info, FMT_STRING("Establishing BlenderConnection..."));
 
@@ -1691,7 +1691,7 @@ void Connection::quitBlender() {
   }
   _writeStr("QUIT");
   _readStr(lineBuf, sizeof(lineBuf));
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__SWITCH__)
   waitpid(m_blenderProc, nullptr, 0);
 #endif
 }
